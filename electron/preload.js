@@ -1,5 +1,5 @@
-import { contextBridge } from "electron";
+import { contextBridge } from 'electron'
 
-contextBridge.exposeInMainWorld("api", {
-  hello: () => "Hello World",
-});
+contextBridge.exposeInMainWorld('api', {
+    hello: () => 'Hello World'
+})
