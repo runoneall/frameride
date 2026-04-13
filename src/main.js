@@ -1,4 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+const app = createApp(App)
 
-createApp(App).mount('#app')
+import './global.css'
+
+import naive from 'naive-ui'
+app.use(naive)
+
+app.mount('#app')

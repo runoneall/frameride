@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Menu } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -21,6 +21,10 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.mjs')
         }
     })
+
+    Menu.setApplicationMenu(null)
+
+    win.setSize(1024, 768)
 
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL)
