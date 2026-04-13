@@ -15,6 +15,7 @@
         "@vitejs/plugin-vue": "^5.0.4",
         "electron": "^30.0.1",
         "electron-builder": "^24.13.3",
+        "naive-ui": "^2.44.1",
         "vite": "^5.1.6",
         "vite-plugin-electron": "^0.28.6",
         "vite-plugin-electron-renderer": "^0.14.5"
