@@ -264,3 +264,50 @@ ipcMain.handle('create-dir', async (event, dir) => {
         throw new Error(`创建目录失败:${err.message}`)
     }
 })
+
+ipcMain.handle('del-file-or-dir', async (event, target) => {
+    if (!target || typeof target !== 'string') {
+        throw new Error('删除失败:目标路径无效')
+    }
+
+    if (!workspace_root) {
+        throw new Error('删除失败:工作区根目录未设置')
+    }
+
+    const targetPath = path.join(workspace_root, target)
+    const resolvedPath = path.resolve(targetPath)
+
+    if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝:检测到非法的路径遍历尝试')
+    }
+
+    try {
+        if (!fs.existsSync(resolvedPath)) {
+            throw new Error('删除失败:目标文件或目录不存在')
+        }
+
+        const stat = fs.statSync(resolvedPath)
+
+        if (stat.isDirectory()) {
+            fs.rmSync(resolvedPath, { recursive: true, force: true })
+        } else {
+            fs.unlinkSync(resolvedPath)
+        }
+
+        return true
+    } catch (err) {
+        if (err.message.startsWith('删除失败')) {
+            throw err
+        }
+
+        if (err.code === 'EACCES') {
+            throw new Error('删除失败:没有权限删除该文件或目录')
+        }
+
+        if (err.code === 'EPERM') {
+            throw new Error('删除失败:无法删除该文件或目录，可能是由于权限问题或文件正在被使用')
+        }
+
+        throw new Error(`删除文件或目录失败:${err.message}`)
+    }
+})

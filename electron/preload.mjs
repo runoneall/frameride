@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('api', {
     getFileContent: file => ipcRenderer.invoke('get-file-content', file),
     setFileContent: (file, content) => ipcRenderer.invoke('set-file-content', file, content),
     createFile: file => ipcRenderer.invoke('create-file', file),
-    createDir: dir => ipcRenderer.invoke('create-dir', dir)
+    createDir: dir => ipcRenderer.invoke('create-dir', dir),
+    delFileOrDir: target => ipcRenderer.invoke('del-file-or-dir', target)
 })
