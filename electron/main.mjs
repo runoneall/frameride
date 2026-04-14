@@ -16,8 +16,23 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
 let win
+let workspace_root
 
 const createWindow = () => {
+    workspace_root = process.argv[1] ?? os.homedir()
+
+    try {
+        if (!fs.statSync(workspace_root).isDirectory()) {
+            console.error(`${workspace_root} is not a directory`)
+            app.quit()
+            return
+        }
+    } catch {
+        console.error(`Directory ${workspace_root} does not exist`)
+        app.quit()
+        return
+    }
+
     win = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs')
@@ -51,17 +66,5 @@ app.on('activate', () => {
 app.whenReady().then(createWindow)
 
 ipcMain.handle('get-workspace-root', () => {
-    const workspace_root = process.argv[1] ?? os.homedir()
-
-    if (!fs.existsSync(workspace_root)) {
-        console.log(`目录 ${workspace_root} 不存在`)
-        app.quit()
-    }
-
-    if (!fs.statSync(workspace_root).isDirectory()) {
-        console.log(`${workspace_root} 不是一个目录`)
-        app.quit()
-    }
-
     return workspace_root
 })
