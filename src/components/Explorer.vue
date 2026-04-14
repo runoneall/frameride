@@ -322,12 +322,27 @@ const handleContextMenu = (e, node) => {
     e.preventDefault()
     e.stopPropagation()
 
+    console.log('右键点击节点:', node.label, node.key) // 调试信息
+
     // 设置当前右键点击的节点为选中状态
     selectedKeys.value = [node.key]
     currentNode.value = node
 
     dropdownPosition.value = { x: e.clientX, y: e.clientY }
     showDropdown.value = true
+
+    console.log('菜单状态:', showDropdown.value, '位置:', dropdownPosition.value) // 调试信息
+}
+
+// 为树节点添加属性（包括右键事件）
+const getNodeProps = ({ option }) => {
+    return {
+        onContextmenu: e => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleContextMenu(e, option)
+        }
+    }
 }
 
 // 右键菜单选项
@@ -373,7 +388,11 @@ const handleDropdownSelect = async key => {
 }
 
 // 点击外部关闭菜单
-const handleClickOutside = () => {
+const handleClickOutside = e => {
+    // 如果是右键点击，不关闭菜单
+    if (e.button === 2) {
+        return
+    }
     showDropdown.value = false
 }
 
@@ -430,9 +449,9 @@ onUnmounted(() => {
         </div>
 
         <!-- 文件树 -->
-        <n-tree v-else-if="treeData.length > 0" ref="treeRef" :data="treeData" block-line :on-load="handleLoad" v-model:expanded-keys="expandedKeys" v-model:selected-keys="selectedKeys" class="file-tree">
+        <n-tree v-else-if="treeData.length > 0" ref="treeRef" :data="treeData" block-line :on-load="handleLoad" :node-props="getNodeProps" v-model:expanded-keys="expandedKeys" v-model:selected-keys="selectedKeys" class="file-tree">
             <template #default="{ node }">
-                <div @contextmenu="e => handleContextMenu(e, node)" style="width: 100%; cursor: pointer">
+                <div style="width: 100%; cursor: pointer">
                     {{ node.label }}
                 </div>
             </template>
@@ -444,7 +463,7 @@ onUnmounted(() => {
         </div>
 
         <!-- 右键菜单 -->
-        <n-dropdown :show="showDropdown" :options="dropdownOptions" :x="dropdownPosition.x" :y="dropdownPosition.y" placement="bottom-start" @select="handleDropdownSelect" @clickoutside="handleClickOutside" />
+        <n-dropdown trigger="manual" :show="showDropdown" :options="dropdownOptions" :x="dropdownPosition.x" :y="dropdownPosition.y" placement="bottom-start" @select="handleDropdownSelect" @clickoutside="handleClickOutside" />
     </div>
 </template>
 
