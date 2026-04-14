@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('api', {
     setWorkspaceRoot: root => ipcRenderer.invoke('set-workspace-root', root),
     getWorkspaceFiles: subdir => ipcRenderer.invoke('get-workspace-files', subdir),
     getFileContent: file => ipcRenderer.invoke('get-file-content', file),
-    createFile: (file, subdir) => ipcRenderer.invoke('create-file', file, subdir),
-    createDir: (dir, subdir) => ipcRenderer.invoke('create-dir', dir, subdir)
+    setFileContent: (file, content) => ipcRenderer.invoke('set-file-content', file, content),
+    createFile: file => ipcRenderer.invoke('create-file', file),
+    createDir: dir => ipcRenderer.invoke('create-dir', dir)
 })

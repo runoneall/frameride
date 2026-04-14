@@ -124,116 +124,143 @@ ipcMain.handle('get-workspace-files', async (event, subdir = '') => {
 
 ipcMain.handle('get-file-content', async (event, file) => {
     if (!file || typeof file !== 'string') {
-        throw new Error('读取失败：文件路径无效')
+        throw new Error('读取失败:文件路径无效')
     }
 
     if (!workspace_root) {
-        throw new Error('读取失败：工作区根目录未设置')
+        throw new Error('读取失败:工作区根目录未设置')
     }
 
     const filePath = path.join(workspace_root, file)
     const resolvedPath = path.resolve(filePath)
 
     if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
-        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+        throw new Error('访问被拒绝:检测到非法的路径遍历尝试')
     }
 
     try {
         const stat = fs.statSync(resolvedPath)
         if (!stat.isFile()) {
-            throw new Error('读取失败：指定路径不是一个文件')
+            throw new Error('读取失败:指定路径不是一个文件')
         }
 
         return fs.readFileSync(resolvedPath, 'utf-8')
     } catch (err) {
         if (err.code === 'ENOENT') {
-            throw new Error('文件不存在：请检查文件路径是否正确')
+            throw new Error('文件不存在:请检查文件路径是否正确')
         }
 
-        throw new Error(`读取文件内容失败：${err.message}`)
+        throw new Error(`读取文件内容失败:${err.message}`)
     }
 })
 
-ipcMain.handle('create-file', async (event, file, subdir = '') => {
+ipcMain.handle('set-file-content', async (event, file, content) => {
     if (!file || typeof file !== 'string') {
-        throw new Error('创建失败：文件名无效')
+        throw new Error('写入失败:文件路径无效')
+    }
+
+    if (content === undefined || content === null) {
+        throw new Error('写入失败:文件内容不能为空')
     }
 
     if (!workspace_root) {
-        throw new Error('创建失败：工作区根目录未设置')
+        throw new Error('写入失败:工作区根目录未设置')
     }
 
-    const targetDir = path.join(workspace_root, subdir)
-    const resolvedTarget = path.resolve(targetDir)
-
-    if (!resolvedTarget.startsWith(path.resolve(workspace_root))) {
-        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
-    }
-
-    const filePath = path.join(resolvedTarget, file)
+    const filePath = path.join(workspace_root, file)
     const resolvedPath = path.resolve(filePath)
 
     if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
-        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+        throw new Error('访问被拒绝:检测到非法的路径遍历尝试')
     }
 
     try {
-        if (fs.existsSync(resolvedPath)) {
-            throw new Error('创建失败：文件已存在')
+        const dirPath = path.dirname(resolvedPath)
+        if (!fs.existsSync(dirPath)) {
+            throw new Error('写入失败:文件所在目录不存在')
         }
 
-        fs.writeFileSync(resolvedPath, '', 'utf-8')
-        return {
-            path: path.relative(workspace_root, resolvedPath),
-            type: 'file'
-        }
+        fs.writeFileSync(resolvedPath, content, 'utf-8')
+        return true
     } catch (err) {
-        if (err.message.startsWith('创建失败') || err.message.startsWith('访问被拒绝')) {
-            throw err
+        if (err.code === 'EACCES') {
+            throw new Error('写入失败:没有权限写入该文件')
         }
 
-        throw new Error(`创建文件失败：${err.message}`)
+        throw new Error(`写入文件失败:${err.message}`)
     }
 })
 
-ipcMain.handle('create-dir', async (event, dir, subdir = '') => {
-    if (!dir || typeof dir !== 'string') {
-        throw new Error('创建失败：目录名无效')
+ipcMain.handle('create-file', async (event, file) => {
+    if (!file || typeof file !== 'string') {
+        throw new Error('创建失败:文件路径无效')
     }
 
     if (!workspace_root) {
-        throw new Error('创建失败：工作区根目录未设置')
+        throw new Error('创建失败:工作区根目录未设置')
     }
 
-    const targetDir = path.join(workspace_root, subdir)
-    const resolvedTarget = path.resolve(targetDir)
-
-    if (!resolvedTarget.startsWith(path.resolve(workspace_root))) {
-        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
-    }
-
-    const dirPath = path.join(resolvedTarget, dir)
-    const resolvedPath = path.resolve(dirPath)
+    const filePath = path.join(workspace_root, file)
+    const resolvedPath = path.resolve(filePath)
 
     if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
-        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+        throw new Error('访问被拒绝:检测到非法的路径遍历尝试')
     }
 
     try {
         if (fs.existsSync(resolvedPath)) {
-            throw new Error('创建失败：目录已存在')
+            throw new Error('创建失败:文件或目录已存在')
         }
 
-        fs.mkdirSync(resolvedPath, { recursive: true })
-        return {
-            path: path.relative(workspace_root, resolvedPath),
-            type: 'directory'
+        const dirPath = path.dirname(resolvedPath)
+        if (!fs.existsSync(dirPath)) {
+            throw new Error('创建失败:父目录不存在')
         }
+
+        fs.writeFileSync(resolvedPath, '', 'utf-8')
+        return true
     } catch (err) {
-        if (err.message.startsWith('创建失败') || err.message.startsWith('访问被拒绝')) {
+        if (err.message.startsWith('创建失败')) {
             throw err
         }
 
-        throw new Error(`创建目录失败：${err.message}`)
+        throw new Error(`创建文件失败:${err.message}`)
+    }
+})
+
+ipcMain.handle('create-dir', async (event, dir) => {
+    if (!dir || typeof dir !== 'string') {
+        throw new Error('创建失败:目录路径无效')
+    }
+
+    if (!workspace_root) {
+        throw new Error('创建失败:工作区根目录未设置')
+    }
+
+    const dirPath = path.join(workspace_root, dir)
+    const resolvedPath = path.resolve(dirPath)
+
+    if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝:检测到非法的路径遍历尝试')
+    }
+
+    try {
+        if (fs.existsSync(resolvedPath)) {
+            throw new Error('创建失败:文件或目录已存在')
+        }
+
+        const parentPath = path.dirname(resolvedPath)
+        if (!fs.existsSync(parentPath)) {
+            throw new Error('创建失败:父目录不存在')
+        }
+
+        fs.mkdirSync(resolvedPath)
+        return true
+    } catch (err) {
+        if (err.message.startsWith('创建失败')) {
+            throw err
+        }
+
+        throw new Error(`创建目录失败:${err.message}`)
     }
 })
