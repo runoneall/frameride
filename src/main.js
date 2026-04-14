@@ -2,9 +2,12 @@ import { createApp } from 'vue'
 import App from './App.vue'
 const app = createApp(App)
 
-import './global.css'
-
 import naive from 'naive-ui'
 app.use(naive)
 
+import { createPinia } from 'pinia'
+const pinia = createPinia()
+app.use(pinia)
+
+import './global.css'
 app.mount('#app')
