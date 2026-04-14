@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import os from 'node:os'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -49,5 +50,5 @@ app.on('activate', () => {
 app.whenReady().then(createWindow)
 
 ipcMain.handle('get-workspace-root', () => {
-    return process.argv[1] ?? null
+    return process.argv[1] ?? os.homedir()
 })
