@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
+import fs from 'node:fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -50,5 +51,17 @@ app.on('activate', () => {
 app.whenReady().then(createWindow)
 
 ipcMain.handle('get-workspace-root', () => {
-    return process.argv[1] ?? os.homedir()
+    const workspace_root = process.argv[1] ?? os.homedir()
+
+    if (!fs.existsSync(workspace_root)) {
+        console.log(`目录 ${workspace_root} 不存在`)
+        app.quit()
+    }
+
+    if (!fs.statSync(workspace_root).isDirectory()) {
+        console.log(`${workspace_root} 不是一个目录`)
+        app.quit()
+    }
+
+    return workspace_root
 })
