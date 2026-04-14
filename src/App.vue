@@ -1,13 +1,8 @@
 <script setup>
 import { darkTheme } from 'naive-ui'
 
-import ExplorerIcon from './icons/ExplorerIcon.vue'
-import Explorer from './components/Explorer.vue'
-
-import AIIcon from './icons/AIIcon.vue'
-import AI from './components/AI.vue'
-
 import TopMenu from './components/TopMenu.vue'
+import SideSpace from './components/SideSpace.vue'
 import EditSpace from './components/EditSpace.vue'
 import BottomBar from './components/BottomBar.vue'
 
@@ -25,21 +20,8 @@ document.title = 'Framer IDE'
             <main class="main-content">
                 <n-split min="120px" default-size="280px" :resize-trigger-size="4">
                     <template #1>
-                        <div class="sidebar-wrapper">
-                            <n-tabs placement="left" class="sidebar-tabs">
-                                <n-tab-pane name="explorer">
-                                    <template #tab>
-                                        <ExplorerIcon class="tabs-icon" />
-                                    </template>
-                                    <Explorer />
-                                </n-tab-pane>
-                                <n-tab-pane name="ai">
-                                    <template #tab>
-                                        <AIIcon class="tabs-icon" />
-                                    </template>
-                                    <AI />
-                                </n-tab-pane>
-                            </n-tabs>
+                        <div class="sidebar-area">
+                            <SideSpace />
                         </div>
                     </template>
                     <template #2>
@@ -74,19 +56,9 @@ document.title = 'Framer IDE'
     overflow: hidden;
 }
 
-.sidebar-wrapper,
-.sidebar-wrapper > div[role='none'] {
+.sidebar-area,
+.sidebar-area > div[role='none'] {
     height: 100%;
-}
-
-.sidebar-tabs {
-    height: 100%;
-}
-
-.sidebar-tabs :deep(.n-tab-pane) {
-    height: 100%;
-    padding: 0;
-    overflow: auto;
 }
 
 .editor-area {
@@ -96,30 +68,5 @@ document.title = 'Framer IDE'
 .bottom-bar {
     height: 20px;
     border-top: 1px solid darkgrey;
-}
-
-.tabs-icon {
-    width: 30px;
-    height: 30px;
-    color: lightgrey;
-    display: block;
-}
-
-.sidebar-tabs :deep(.n-tabs-nav) {
-    border-right: 1px solid darkgrey;
-}
-
-.sidebar-tabs :deep(.n-tabs-bar) {
-    left: 0 !important;
-    right: auto !important;
-}
-
-.sidebar-tabs :deep(.n-tabs-tab) {
-    border: 0 !important;
-    padding: 0 !important;
-    width: 40px;
-    height: 40px;
-    align-items: center !important;
-    justify-content: center !important;
 }
 </style>
