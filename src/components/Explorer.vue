@@ -4,39 +4,36 @@ import { useWorkspaceStore } from '../stores/workspace'
 
 const workspaceStore = useWorkspaceStore()
 
-// 树形数据
 const treeData = ref([])
-// 加载中状态
 const loading = ref(false)
-// 记录已加载的目录
 const loadedKeys = ref(new Set())
 
-// 提取文件名或目录名（跨平台兼容）
 const getBaseName = fullPath => {
-    // 同时处理 Windows (\) 和 Unix (/) 路径分隔符
-    const lastSlashIndex = Math.max(fullPath.lastIndexOf('/'), fullPath.lastIndexOf('\\'))
-    return lastSlashIndex === -1 ? fullPath : fullPath.substring(lastSlashIndex + 1)
+    const separators = ['/', '\\']
+    let lastSeparatorIndex = -1
+
+    for (const sep of separators) {
+        const index = fullPath.lastIndexOf(sep)
+        if (index > lastSeparatorIndex) {
+            lastSeparatorIndex = index
+        }
+    }
+
+    return lastSeparatorIndex === -1 ? fullPath : fullPath.substring(lastSeparatorIndex + 1)
 }
 
-// 将文件列表转换为树节点格式
 const convertToTreeNodes = items => {
     return items.map(item => ({
         key: item.path,
         label: getBaseName(item.path),
         isLeaf: item.type === 'file',
-        // 目录节点初始为 undefined，触发懒加载
-        children: undefined,
-        // 存储原始数据
-        _raw: item
+        children: undefined
     }))
 }
 
-// 加载指定目录的文件
 const loadDirectory = async (subdir = '') => {
     try {
-        console.log('加载目录:', subdir)
         const files = await window.api.getWorkspaceFiles(subdir)
-        console.log('获取到文件:', files)
         return convertToTreeNodes(files)
     } catch (error) {
         console.error('加载目录失败:', error)
@@ -44,11 +41,8 @@ const loadDirectory = async (subdir = '') => {
     }
 }
 
-// 初始化加载根目录
 const initTree = async () => {
-    if (!workspaceStore.root) {
-        return
-    }
+    if (!workspaceStore.root) return
 
     loading.value = true
     loadedKeys.value.clear()
@@ -59,62 +53,43 @@ const initTree = async () => {
     }
 }
 
-// 查找并更新节点的 children
-const findAndUpdateNode = (nodes, targetKey, children) => {
+const updateNodeChildren = (nodes, targetKey, children) => {
     for (const node of nodes) {
         if (node.key === targetKey) {
             node.children = children
             return true
         }
-        if (node.children && Array.isArray(node.children)) {
-            if (findAndUpdateNode(node.children, targetKey, children)) {
-                return true
-            }
+
+        if (node.children && updateNodeChildren(node.children, targetKey, children)) {
+            return true
         }
     }
+
     return false
 }
 
-// 懒加载函数 - n-tree 的 onLoad 回调
 const handleLoad = async node => {
-    // 避免重复加载
     if (loadedKeys.value.has(node.key)) {
         return node.children || []
     }
 
-    // 只处理目录节点
-    if (node._raw?.type !== 'directory') {
-        loadedKeys.value.add(node.key)
-        return []
-    }
-
-    const subdir = node._raw.path
-    const children = await loadDirectory(subdir)
-
-    // 标记为已加载
+    const children = await loadDirectory(node.key)
     loadedKeys.value.add(node.key)
 
-    // 关键：手动更新树数据中的节点
-    findAndUpdateNode(treeData.value, node.key, children)
+    updateNodeChildren(treeData.value, node.key, children)
 
     return children
 }
 
-// 监听 root 变化
 watch(
     () => workspaceStore.root,
     newRoot => {
-        if (newRoot) {
-            initTree()
-        }
+        if (newRoot) initTree()
     }
 )
 
-// 组件挂载时初始化
 onMounted(() => {
-    if (workspaceStore.root) {
-        initTree()
-    }
+    if (workspaceStore.root) initTree()
 })
 </script>
 
@@ -165,7 +140,6 @@ onMounted(() => {
     overflow-x: auto;
 }
 
-/* 防止树节点内容折行 */
 .file-tree :deep(.n-tree-node-content) {
     padding: 4px 8px;
     white-space: nowrap;
@@ -180,7 +154,6 @@ onMounted(() => {
     color: #999;
 }
 
-/* 美化滚动条样式（Webkit浏览器） */
 .file-tree::-webkit-scrollbar {
     width: 8px;
     height: 8px;
