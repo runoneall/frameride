@@ -1,29 +1,21 @@
 <script setup>
-import { ref } from 'vue'
-
-const menuOptions = [
+const menuopt = [
     {
         label: '工作区',
-        key: 'workspace',
         children: [
             {
                 label: '打开',
-                key: 'open'
+                call: () => console.log('打开')
             }
         ]
     }
 ]
 
-const activeKey = ref(null)
-const handleMenuClick = (key, item) => {
-    activeKey.value = null
-
-    console.log(key, item)
-}
+const onclick = (_, item) => item.call()
 </script>
 
 <template>
-    <n-menu class="top-menu" mode="horizontal" :options="menuOptions" v-model:value="activeKey" @update:value="handleMenuClick" />
+    <n-menu class="top-menu" mode="horizontal" :options="menuopt" @update:value="onclick" />
 </template>
 
 <style scoped>
