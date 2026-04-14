@@ -171,4 +171,8 @@ onMounted(() => {
 .file-tree::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
 }
+
+.file-tree::-webkit-scrollbar-corner {
+    background: transparent;
+}
 </style>
