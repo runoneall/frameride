@@ -1,5 +1,5 @@
 import { contextBridge } from 'electron'
 
 contextBridge.exposeInMainWorld('api', {
-    hello: () => 'Hello World'
+    WORKSPACE_ROOT: process.argv || null
 })
