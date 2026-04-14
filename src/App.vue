@@ -13,7 +13,7 @@ document.title = 'Framer IDE'
     <n-config-provider :theme="darkTheme">
         <n-global-style />
         <div class="app-container">
-            <header class="top-menu">
+            <header class="top-menu-container">
                 <TopMenu />
             </header>
 
@@ -46,7 +46,7 @@ document.title = 'Framer IDE'
     height: 100vh;
 }
 
-.top-menu {
+.top-menu-container {
     height: 30px;
     border-bottom: 1px solid darkgrey;
 }
