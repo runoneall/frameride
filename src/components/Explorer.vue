@@ -20,9 +20,9 @@ const dropdownPosition = ref({ x: 0, y: 0 })
 const currentNode = ref(null)
 
 // 获取文件名
-const getBaseName = path => path.split(/[\\/]/).pop() || path
+const getBaseName = path => path.split(/[\\/]/).pop()
 
-// 转换树节点
+// 转换为树节点
 const convertToTreeNodes = items =>
     items.map(item => ({
         key: item.path,
@@ -32,7 +32,7 @@ const convertToTreeNodes = items =>
         _raw: item
     }))
 
-// 加载目录
+// 加载目录内容
 const loadDirectory = async (subdir = '') => {
     try {
         const files = await window.api.getWorkspaceFiles(subdir)
@@ -47,14 +47,19 @@ const loadDirectory = async (subdir = '') => {
 const initTree = async () => {
     if (!workspaceStore.root) return
     loading.value = true
-    loadedKeys.value.clear()
-    expandedKeys.value = []
-    selectedKeys.value = []
     try {
+        resetTreeState()
         treeData.value = await loadDirectory()
     } finally {
         loading.value = false
     }
+}
+
+// 重置树状态
+const resetTreeState = () => {
+    loadedKeys.value.clear()
+    expandedKeys.value = []
+    selectedKeys.value = []
 }
 
 // 更新节点子节点
@@ -71,7 +76,7 @@ const updateNodeChildren = (nodes, targetKey, children) => {
     return false
 }
 
-// 懒加载
+// 懒加载子节点
 const handleLoad = async node => {
     if (loadedKeys.value.has(node.key)) return node.children || []
     const children = await loadDirectory(node.key)
@@ -96,9 +101,8 @@ const findNodeByKey = (nodes, key) => {
 const getTargetSubdir = () => {
     if (selectedKeys.value.length > 0) {
         const node = findNodeByKey(treeData.value, selectedKeys.value[0])
-        if (node) {
-            return node.isLeaf ? node.key.replace(/\\/g, '/').split('/').slice(0, -1).join('/') : node.key
-        }
+        if (node && !node.isLeaf) return node.key
+        if (node) return node.key.replace(/\\/g, '/').split('/').slice(0, -1).join('/')
     }
     return expandedKeys.value[0] || ''
 }
@@ -134,7 +138,6 @@ const showInputDialog = (title, placeholder) => {
 const createItem = async type => {
     const targetDir = getTargetSubdir()
     const name = await showInputDialog(type === 'file' ? '新建文件' : '新建文件夹', type === 'file' ? '例如: index.js' : '例如: src')
-
     if (!name) return
 
     try {
@@ -177,7 +180,6 @@ const refreshCurrentDirectory = async (subdir = '') => {
 // 右键菜单处理
 const handleContextMenu = (e, node) => {
     e.preventDefault()
-    e.stopPropagation()
     selectedKeys.value = [node.key]
     currentNode.value = node
     dropdownPosition.value = { x: e.clientX, y: e.clientY }
@@ -300,18 +302,5 @@ onUnmounted(() => {
     font-size: 13px;
     flex: 1;
     overflow: auto;
-}
-
-/* 自定义树节点样式 */
-.file-tree :deep(.n-tree-node-content) {
-    padding: 4px 8px;
-}
-
-.file-tree :deep(.n-tree-node-content:hover) {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.file-tree :deep(.n-tree-node-content--selected) {
-    background-color: rgba(64, 158, 255, 0.2);
 }
 </style>
