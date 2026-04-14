@@ -187,6 +187,8 @@ const dropdownOptions = [
     { label: '新建文件', key: 'new-file' },
     { label: '新建文件夹', key: 'new-folder' },
     { type: 'divider', key: 'd1' },
+    { label: '删除', key: 'delete', danger: true },
+    { type: 'divider', key: 'd2' },
     { label: '刷新', key: 'refresh' }
 ]
 
@@ -197,7 +199,41 @@ const handleDropdownSelect = async key => {
     else if (key === 'refresh') {
         const subdir = currentNode.value ? (currentNode.value.isLeaf ? currentNode.value.key.split('/').slice(0, -1).join('/') : currentNode.value.key) : ''
         await refreshCurrentDirectory(subdir)
-    }
+    } else if (key === 'delete') await deleteItem()
+}
+
+const deleteItem = async () => {
+    if (!currentNode.value) return
+
+    const itemName = currentNode.value.label
+    const itemType = currentNode.value.isLeaf ? '文件' : '文件夹'
+
+    dialog.warning({
+        title: '确认删除',
+        content: `确定要删除${itemType} "${itemName}" 吗？此操作不可撤销。`,
+        positiveText: '删除',
+        negativeText: '取消',
+        onPositiveClick: async () => {
+            try {
+                await window.api.delFileOrDir(currentNode.value.key)
+
+                dialog.success({
+                    title: '删除成功',
+                    content: `${itemType} "${itemName}" 已被删除`,
+                    positiveText: '确定'
+                })
+
+                const parentDir = currentNode.value.key.split('/').slice(0, -1).join('/')
+                await refreshCurrentDirectory(parentDir)
+            } catch (error) {
+                dialog.error({
+                    title: '删除失败',
+                    content: `删除失败: ${error.message}`,
+                    positiveText: '确定'
+                })
+            }
+        }
+    })
 }
 
 const handleClickOutside = e => {
