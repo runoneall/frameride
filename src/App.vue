@@ -1,6 +1,15 @@
 <script setup>
 import { darkTheme } from 'naive-ui'
+
 import ExplorerIcon from './icons/ExplorerIcon.vue'
+import Explorer from './components/Explorer.vue'
+
+import AIIcon from './icons/AIIcon.vue'
+import AI from './components/AI.vue'
+
+import TopMenu from './components/TopMenu.vue'
+import EditSpace from './components/EditSpace.vue'
+import BottomBar from './components/BottomBar.vue'
 
 document.title = 'Framer IDE'
 </script>
@@ -8,48 +17,85 @@ document.title = 'Framer IDE'
 <template>
     <n-config-provider :theme="darkTheme">
         <n-global-style />
-        <n-flex vertical style="height: 100vh; gap: 0">
-            <div style="height: 30px; border-bottom: 1px solid darkgrey">
-                <!-- 顶部区域 -->
-            </div>
-            <div style="flex: 1">
+        <div class="app-container">
+            <header class="top-menu">
+                <TopMenu />
+            </header>
+
+            <main class="main-content">
                 <n-split min="120px" default-size="280px" :resize-trigger-size="4">
                     <template #1>
-                        <n-space vertical class="tabs-container">
-                            <n-tabs placement="left" style="height: 100%">
+                        <div class="sidebar-wrapper">
+                            <n-tabs placement="left" class="sidebar-tabs">
                                 <n-tab-pane name="explorer">
                                     <template #tab>
                                         <ExplorerIcon class="tabs-icon" />
                                     </template>
-                                    <div>这里是资源管理器的内容</div>
+                                    <Explorer />
                                 </n-tab-pane>
-                                <n-tab-pane name="explorer1">
+                                <n-tab-pane name="ai">
                                     <template #tab>
-                                        <ExplorerIcon class="tabs-icon" />
+                                        <AIIcon class="tabs-icon" />
                                     </template>
-                                    <div>这里是资源管理器的内容</div>
+                                    <AI />
                                 </n-tab-pane>
                             </n-tabs>
-                        </n-space>
+                        </div>
                     </template>
                     <template #2>
-                        <div style="height: 100%">
-                            <!-- 主区域 -->
+                        <div class="editor-area">
+                            <EditSpace />
                         </div>
                     </template>
                 </n-split>
-            </div>
-            <div style="height: 20px; border-top: 1px solid darkgrey">
-                <!-- 底部区域 -->
-            </div>
-        </n-flex>
+            </main>
+
+            <footer class="bottom-bar">
+                <BottomBar />
+            </footer>
+        </div>
     </n-config-provider>
 </template>
 
 <style scoped>
-.tabs-container,
-:deep(.tabs-container > div[role='none']) {
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.top-menu {
+    height: 30px;
+    border-bottom: 1px solid darkgrey;
+}
+
+.main-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar-wrapper,
+.sidebar-wrapper > div[role='none'] {
     height: 100%;
+}
+
+.sidebar-tabs {
+    height: 100%;
+}
+
+.sidebar-tabs :deep(.n-tab-pane) {
+    height: 100%;
+    padding: 0;
+    overflow: auto;
+}
+
+.editor-area {
+    height: 100%;
+}
+
+.bottom-bar {
+    height: 20px;
+    border-top: 1px solid darkgrey;
 }
 
 .tabs-icon {
@@ -59,21 +105,20 @@ document.title = 'Framer IDE'
     display: block;
 }
 
-:deep(.n-tabs-nav) {
+.sidebar-tabs :deep(.n-tabs-nav) {
     border-right: 1px solid darkgrey;
 }
 
-:deep(.n-tabs-bar) {
+.sidebar-tabs :deep(.n-tabs-bar) {
     left: 0 !important;
     right: auto !important;
 }
 
-:deep(.n-tabs-tab) {
+.sidebar-tabs :deep(.n-tabs-tab) {
     border: 0 !important;
     padding: 0 !important;
     width: 40px;
     height: 40px;
-
     align-items: center !important;
     justify-content: center !important;
 }
