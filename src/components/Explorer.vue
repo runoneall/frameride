@@ -1,8 +1,7 @@
 <script setup>
 import { useWorkspaceStore } from '../stores/workspace'
-const workspaceStore = useWorkspaceStore()
-
-console.log(workspaceStore.WORKSPACE_ROOT)
+const workspace = useWorkspaceStore()
+console.log(workspace.root)
 </script>
 
 <template></template>

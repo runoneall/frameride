@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -31,11 +31,6 @@ const createWindow = () => {
     } else {
         win.loadFile(path.join(RENDERER_DIST, 'index.html'))
     }
-
-    console.log(process.argv)
-    win.webContents.on('did-finish-load', () => {
-        win.webContents.send('WORKSPACE_ROOT', process.argv[1] ?? null)
-    })
 }
 
 app.on('window-all-closed', () => {
@@ -52,3 +47,7 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(createWindow)
+
+ipcMain.handle('get-workspace-root', () => {
+    return process.argv[1] ?? null
+})

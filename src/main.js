@@ -9,5 +9,9 @@ import { createPinia } from 'pinia'
 const pinia = createPinia()
 app.use(pinia)
 
+import { useWorkspaceStore } from './stores/workspace'
+const workspace = useWorkspaceStore()
+await workspace.init()
+
 import './global.css'
 app.mount('#app')
