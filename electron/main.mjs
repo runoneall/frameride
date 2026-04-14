@@ -153,3 +153,87 @@ ipcMain.handle('get-file-content', async (event, file) => {
         throw new Error(`读取文件内容失败：${err.message}`)
     }
 })
+
+ipcMain.handle('create-file', async (event, file, subdir = '') => {
+    if (!file || typeof file !== 'string') {
+        throw new Error('创建失败：文件名无效')
+    }
+
+    if (!workspace_root) {
+        throw new Error('创建失败：工作区根目录未设置')
+    }
+
+    const targetDir = path.join(workspace_root, subdir)
+    const resolvedTarget = path.resolve(targetDir)
+
+    if (!resolvedTarget.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+    }
+
+    const filePath = path.join(resolvedTarget, file)
+    const resolvedPath = path.resolve(filePath)
+
+    if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+    }
+
+    try {
+        if (fs.existsSync(resolvedPath)) {
+            throw new Error('创建失败：文件已存在')
+        }
+
+        fs.writeFileSync(resolvedPath, '', 'utf-8')
+        return {
+            path: path.relative(workspace_root, resolvedPath),
+            type: 'file'
+        }
+    } catch (err) {
+        if (err.message.startsWith('创建失败') || err.message.startsWith('访问被拒绝')) {
+            throw err
+        }
+
+        throw new Error(`创建文件失败：${err.message}`)
+    }
+})
+
+ipcMain.handle('create-dir', async (event, dir, subdir = '') => {
+    if (!dir || typeof dir !== 'string') {
+        throw new Error('创建失败：目录名无效')
+    }
+
+    if (!workspace_root) {
+        throw new Error('创建失败：工作区根目录未设置')
+    }
+
+    const targetDir = path.join(workspace_root, subdir)
+    const resolvedTarget = path.resolve(targetDir)
+
+    if (!resolvedTarget.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+    }
+
+    const dirPath = path.join(resolvedTarget, dir)
+    const resolvedPath = path.resolve(dirPath)
+
+    if (!resolvedPath.startsWith(path.resolve(workspace_root))) {
+        throw new Error('访问被拒绝：检测到非法的路径遍历尝试')
+    }
+
+    try {
+        if (fs.existsSync(resolvedPath)) {
+            throw new Error('创建失败：目录已存在')
+        }
+
+        fs.mkdirSync(resolvedPath, { recursive: true })
+        return {
+            path: path.relative(workspace_root, resolvedPath),
+            type: 'directory'
+        }
+    } catch (err) {
+        if (err.message.startsWith('创建失败') || err.message.startsWith('访问被拒绝')) {
+            throw err
+        }
+
+        throw new Error(`创建目录失败：${err.message}`)
+    }
+})
