@@ -15,7 +15,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 
 let win
 
-function createWindow() {
+const createWindow = () => {
     win = new BrowserWindow({
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs')
@@ -31,6 +31,11 @@ function createWindow() {
     } else {
         win.loadFile(path.join(RENDERER_DIST, 'index.html'))
     }
+
+    console.log(process.argv)
+    win.webContents.on('did-finish-load', () => {
+        win.webContents.send('WORKSPACE_ROOT', process.argv[1] ?? null)
+    })
 }
 
 app.on('window-all-closed', () => {
