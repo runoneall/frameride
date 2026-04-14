@@ -31,11 +31,14 @@ import AI from './AI.vue'
 .sidebar-tabs :deep(.n-tab-pane) {
     height: 100%;
     padding: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .sidebar-tabs :deep(.n-tabs-nav) {
+    max-width: 40px;
+    min-width: 40px;
     border-right: 1px solid darkgrey;
+    overflow: hidden;
 }
 
 .sidebar-tabs :deep(.n-tabs-bar) {
