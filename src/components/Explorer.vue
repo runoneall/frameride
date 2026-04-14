@@ -111,28 +111,33 @@ const handleLoad = async node => {
     return children
 }
 
-// 根据选中节点获取目标目录
+// 获取当前活动的目录(优先使用选中节点,否则使用第一个展开的目录)
 const getTargetSubdir = () => {
-    if (selectedKeys.value.length === 0) {
-        return ''
+    // 如果有选中的节点,优先使用
+    if (selectedKeys.value.length > 0) {
+        const selectedKey = selectedKeys.value[0]
+        const selectedNode = findNodeByKey(treeData.value, selectedKey)
+
+        if (selectedNode) {
+            if (selectedNode.isLeaf) {
+                // 如果是文件,获取其父目录
+                const pathParts = selectedKey.replace(/\\/g, '/').split('/')
+                pathParts.pop()
+                return pathParts.join('/')
+            } else {
+                // 如果是目录,直接使用该目录
+                return selectedKey
+            }
+        }
     }
 
-    const selectedKey = selectedKeys.value[0]
-    const selectedNode = findNodeByKey(treeData.value, selectedKey)
-
-    if (!selectedNode) {
-        return ''
+    // 如果没有选中节点,使用第一个展开的目录作为目标
+    if (expandedKeys.value.length > 0) {
+        return expandedKeys.value[0]
     }
 
-    if (selectedNode.isLeaf) {
-        // 如果是文件，获取其父目录
-        const pathParts = selectedKey.replace(/\\/g, '/').split('/')
-        pathParts.pop()
-        return pathParts.join('/')
-    } else {
-        // 如果是目录，直接使用该目录
-        return selectedKey
-    }
+    // 默认返回根目录
+    return ''
 }
 
 // 递归查找节点
