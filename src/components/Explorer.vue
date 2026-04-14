@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, watch, h } from 'vue'
 import { useWorkspaceStore } from '../stores/workspace'
 import { useDialog } from 'naive-ui'
+
 import NewFileIcon from '../icons/NewFileIcon.vue'
 import NewFolderIcon from '../icons/NewFolderIcon.vue'
 import RefreshIcon from '../icons/RefreshIcon.vue'
@@ -19,10 +20,7 @@ const showDropdown = ref(false)
 const dropdownPosition = ref({ x: 0, y: 0 })
 const currentNode = ref(null)
 
-// 获取文件名
 const getBaseName = path => path.split(/[\\/]/).pop()
-
-// 转换为树节点
 const convertToTreeNodes = items =>
     items.map(item => ({
         key: item.path,
@@ -32,7 +30,6 @@ const convertToTreeNodes = items =>
         _raw: item
     }))
 
-// 加载目录内容
 const loadDirectory = async (subdir = '') => {
     try {
         const files = await window.api.getWorkspaceFiles(subdir)
@@ -43,10 +40,10 @@ const loadDirectory = async (subdir = '') => {
     }
 }
 
-// 初始化树
 const initTree = async () => {
     if (!workspaceStore.root) return
     loading.value = true
+
     try {
         resetTreeState()
         treeData.value = await loadDirectory()
@@ -55,28 +52,27 @@ const initTree = async () => {
     }
 }
 
-// 重置树状态
 const resetTreeState = () => {
     loadedKeys.value.clear()
     expandedKeys.value = []
     selectedKeys.value = []
 }
 
-// 更新节点子节点
 const updateNodeChildren = (nodes, targetKey, children) => {
     for (const node of nodes) {
         if (node.key === targetKey) {
             node.children = children
             return true
         }
+
         if (node.children && updateNodeChildren(node.children, targetKey, children)) {
             return true
         }
     }
+
     return false
 }
 
-// 懒加载子节点
 const handleLoad = async node => {
     if (loadedKeys.value.has(node.key)) return node.children || []
     const children = await loadDirectory(node.key)
@@ -85,7 +81,6 @@ const handleLoad = async node => {
     return children
 }
 
-// 查找节点
 const findNodeByKey = (nodes, key) => {
     for (const node of nodes) {
         if (node.key === key) return node
@@ -94,20 +89,20 @@ const findNodeByKey = (nodes, key) => {
             if (found) return found
         }
     }
+
     return null
 }
 
-// 获取目标目录
 const getTargetSubdir = () => {
     if (selectedKeys.value.length > 0) {
         const node = findNodeByKey(treeData.value, selectedKeys.value[0])
         if (node && !node.isLeaf) return node.key
         if (node) return node.key.replace(/\\/g, '/').split('/').slice(0, -1).join('/')
     }
+
     return expandedKeys.value[0] || ''
 }
 
-// 显示输入对话框
 const showInputDialog = (title, placeholder) => {
     const inputValue = ref('')
     return new Promise(resolve => {
@@ -130,11 +125,11 @@ const showInputDialog = (title, placeholder) => {
             onNegativeClick: () => resolve(''),
             onClose: () => resolve('')
         })
+
         setTimeout(() => document.querySelector('.dialog-input')?.focus(), 100)
     })
 }
 
-// 创建文件或文件夹
 const createItem = async type => {
     const targetDir = getTargetSubdir()
     const name = await showInputDialog(type === 'file' ? '新建文件' : '新建文件夹', type === 'file' ? '例如: index.js' : '例如: src')
@@ -160,7 +155,6 @@ const createItem = async type => {
     }
 }
 
-// 刷新目录
 const refreshCurrentDirectory = async (subdir = '') => {
     loading.value = true
     try {
@@ -177,7 +171,6 @@ const refreshCurrentDirectory = async (subdir = '') => {
     }
 }
 
-// 右键菜单处理
 const handleContextMenu = (e, node) => {
     e.preventDefault()
     selectedKeys.value = [node.key]
