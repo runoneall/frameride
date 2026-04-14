@@ -1,22 +1,29 @@
 <script setup>
+import { ref } from 'vue'
+
 const menuOptions = [
     {
         label: '工作区',
         key: 'workspace',
-        callback: () => {}
+        children: [
+            {
+                label: '打开',
+                key: 'open'
+            }
+        ]
     }
 ]
 
+const activeKey = ref(null)
 const handleMenuClick = (key, item) => {
-    const menuItem = menuOptions.find(option => option.key === key)
-    if (menuItem && menuItem.callback) {
-        menuItem.callback()
-    }
+    activeKey.value = null
+
+    console.log(key, item)
 }
 </script>
 
 <template>
-    <n-menu class="top-menu" mode="horizontal" :options="menuOptions.map(({ label, key }) => ({ label, key }))" @update:value="handleMenuClick" />
+    <n-menu class="top-menu" mode="horizontal" :options="menuOptions" v-model:value="activeKey" @update:value="handleMenuClick" />
 </template>
 
 <style scoped>
@@ -30,6 +37,7 @@ const handleMenuClick = (key, item) => {
 }
 
 .top-menu :deep(.n-menu-item-content) {
+    height: 100%;
     padding: 0 10px;
 }
 </style>
