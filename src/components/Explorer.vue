@@ -163,15 +163,18 @@ const menuopt = [
     }
 ]
 
+const mousemenu = e => {
+    e.preventDefault()
+    menushow.value = true
+    menux.value = e.clientX
+    menuy.value = e.clientY
+}
+
 const nodeprop = ({ option }) => {
     return {
         onContextmenu: e => {
-            e.preventDefault()
             selectkey.value = [option.key]
-
-            menux.value = e.clientX
-            menuy.value = e.clientY
-            menushow.value = true
+            mousemenu(e)
         }
     }
 }
@@ -210,7 +213,7 @@ watch(
 
         <n-dropdown placement="bottom-start" trigger="manual" :x="menux" :y="menuy" :options="menuopt" :show="menushow" :on-clickoutside="menuclose" @update:show="v => (menushow = v)" @select="menuselect" />
 
-        <n-scrollbar x-scrollable trigger="none" style="flex: 1">
+        <n-scrollbar x-scrollable trigger="none" style="flex: 1" @contextmenu="mousemenu">
             <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" v-model:expanded-keys="expandkey" v-model:selected-keys="selectkey" :node-props="nodeprop"></n-tree>
         </n-scrollbar>
     </div>
