@@ -20,16 +20,12 @@ const getTreeRoot = async () => {
 }
 
 const getTreeMore = async node => {
-    return new Promise(async resolve => {
-        const data = await window.api.getWorkspaceFiles(node.key)
-        node.children = data.map(item => ({
-            label: item.name,
-            key: item.path,
-            isLeaf: item.isfile
-        }))
-
-        resolve()
-    })
+    const data = await window.api.getWorkspaceFiles(node.key)
+    node.children = data.map(item => ({
+        label: item.name,
+        key: item.path,
+        isLeaf: item.isfile
+    }))
 }
 
 const newFile = () => {}
