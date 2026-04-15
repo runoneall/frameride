@@ -10,6 +10,7 @@ import CollapseIcon from '../icons/CollapseIcon.vue'
 const workspace = useWorkspaceStore()
 const treedata = ref([])
 const expandkey = ref([])
+const selectkey = ref([])
 
 const loadtree = async node => {
     const data = await window.api.getWorkspaceFiles(node?.key)
@@ -25,6 +26,25 @@ const loadtree = async node => {
     } else {
         treedata.value = mapped
     }
+}
+
+const getselectdir = () => {
+    if (selectkey.value.length === 0) return ''
+    const keys = selectkey.value[0].split(/[/\\]/).filter(Boolean)
+
+    let curpath = ''
+    let nodes = treedata.value
+
+    for (const key of keys) {
+        const node = nodes.find(n => n.label === key)
+        if (!node) break
+        if (node.isLeaf) return curpath
+
+        curpath = node.key
+        nodes = node.children || []
+    }
+
+    return curpath
 }
 
 const newfile = async () => {}
@@ -75,7 +95,7 @@ watch(
         </div>
 
         <n-scrollbar x-scrollable trigger="none" style="flex: 1">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey"></n-tree>
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
         </n-scrollbar>
     </div>
 </template>
