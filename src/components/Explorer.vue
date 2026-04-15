@@ -139,7 +139,7 @@ const menuopt = [
                 call: newfile
             },
             {
-                label: '文件夹',
+                label: '目录',
                 call: newfolder
             }
         ]
