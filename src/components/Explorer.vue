@@ -8,29 +8,26 @@ import RefreshIcon from '../icons/RefreshIcon.vue'
 import CollapseIcon from '../icons/CollapseIcon.vue'
 
 const workspace = useWorkspaceStore()
-const fileTree = ref([])
+const treedata = ref([])
 
-const getTreeRoot = async () => {
-    const data = await window.api.getWorkspaceFiles()
-    fileTree.value = data.map(item => ({
+const loadtree = async node => {
+    const data = await window.api.getWorkspaceFiles(node?.key)
+    const mapped = data.map(item => ({
         label: item.name,
         key: item.path,
         isLeaf: item.isfile
     }))
+
+    if (node) {
+        node.children = mapped
+    } else {
+        treedata.value = mapped
+    }
 }
 
-const getTreeMore = async node => {
-    const data = await window.api.getWorkspaceFiles(node.key)
-    node.children = data.map(item => ({
-        label: item.name,
-        key: item.path,
-        isLeaf: item.isfile
-    }))
-}
+const newfile = () => {}
 
-const newFile = () => {}
-
-const newFolder = () => {}
+const newfolder = () => {}
 
 const refresh = () => {}
 
@@ -38,7 +35,7 @@ const collapse = () => {}
 
 watch(
     () => workspace.root,
-    () => getTreeRoot(),
+    () => loadtree(),
     { immediate: true }
 )
 </script>
@@ -46,12 +43,12 @@ watch(
 <template>
     <div style="height: 100%; display: flex; flex-direction: column">
         <div class="top-tools">
-            <n-button text @click="newFile">
+            <n-button text @click="newfile">
                 <template #icon>
                     <NewFileIcon class="icon" />
                 </template>
             </n-button>
-            <n-button text @click="newFolder">
+            <n-button text @click="newfolder">
                 <template #icon>
                     <NewFolderIcon class="icon" />
                 </template>
@@ -69,7 +66,7 @@ watch(
         </div>
 
         <n-scrollbar x-scrollable trigger="none" style="flex: 1">
-            <n-tree block-line expand-on-click show-line :data="fileTree" :on-load="getTreeMore"></n-tree>
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree"></n-tree>
         </n-scrollbar>
     </div>
 </template>
