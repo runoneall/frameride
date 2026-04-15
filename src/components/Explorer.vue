@@ -9,6 +9,7 @@ import CollapseIcon from '../icons/CollapseIcon.vue'
 
 const workspace = useWorkspaceStore()
 const treedata = ref([])
+const expandkey = ref([])
 
 const loadtree = async node => {
     const data = await window.api.getWorkspaceFiles(node?.key)
@@ -20,6 +21,7 @@ const loadtree = async node => {
 
     if (node) {
         node.children = mapped
+        expandkey.value.push(node.key)
     } else {
         treedata.value = mapped
     }
@@ -31,7 +33,14 @@ const newfolder = () => {}
 
 const refresh = () => {}
 
-const collapse = () => {}
+const collapse = () => {
+    expandkey.value = []
+    treedata.value.forEach(item => {
+        if (!item.isLeaf) {
+            item.children = undefined
+        }
+    })
+}
 
 watch(
     () => workspace.root,
@@ -66,7 +75,7 @@ watch(
         </div>
 
         <n-scrollbar x-scrollable trigger="none" style="flex: 1">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree"></n-tree>
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey"></n-tree>
         </n-scrollbar>
     </div>
 </template>
