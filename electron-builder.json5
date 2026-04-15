@@ -1,22 +1,32 @@
 // @see - https://www.electron.build/configuration/configuration
 {
     $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
-    appId: 'YourAppID',
+
+    appId: 'com.github.runoneall.frameride',
     asar: true,
-    productName: 'YourAppName',
+    productName: 'Framer IDE',
     directories: {
-        output: 'release/${version}'
+        output: 'release/'
     },
     files: ['dist', 'dist-electron'],
+
     linux: {
         target: ['AppImage'],
-        artifactName: '${productName}-Linux-${version}.${ext}',
-        icon: 'public/icons/icon.png'
+        artifactName: '${productName}-Linux.${ext}',
+        icon: 'electron/icon.png'
     },
+
     mac: {
         target: ['dmg'],
-        artifactName: '${productName}-Mac-${version}-Installer.${ext}',
-        icon: 'public/icons/icon.icns'
+        artifactName: '${productName}-Mac-Installer.${ext}',
+        icon: 'electron/icon.png'
+    },
+
+    nsis: {
+        oneClick: false,
+        perMachine: false,
+        allowToChangeInstallationDirectory: true,
+        deleteAppDataOnUninstall: false
     },
     win: {
         target: [
@@ -25,14 +35,8 @@
                 arch: ['x64']
             }
         ],
-        artifactName: '${productName}-Windows-${version}-Setup.${ext}',
+        artifactName: '${productName}-Windows-Setup.${ext}',
         signAndEditExecutable: false,
-        icon: 'public/icons/icon.ico'
-    },
-    nsis: {
-        oneClick: false,
-        perMachine: false,
-        allowToChangeInstallationDirectory: true,
-        deleteAppDataOnUninstall: false
+        icon: 'electron/icon.png'
     }
 }
