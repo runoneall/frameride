@@ -13,13 +13,13 @@
     linux: {
         target: ['AppImage'],
         artifactName: '${productName} Linux.${ext}',
-        icon: 'electron/icon.png'
+        icon: 'icons/icon.png'
     },
 
     mac: {
         target: ['zip'],
         artifactName: '${productName} MacOS.${ext}',
-        icon: 'electron/icon.png'
+        icon: 'icons/icon.icns'
     },
 
     win: {
@@ -31,6 +31,6 @@
         ],
         artifactName: '${productName} Windows.${ext}',
         signAndEditExecutable: false,
-        icon: 'electron/icon.png'
+        icon: 'icons/icon.ico'
     }
 }
