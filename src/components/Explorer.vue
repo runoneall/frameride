@@ -8,7 +8,6 @@ import RefreshIcon from '../icons/RefreshIcon.vue'
 import CollapseIcon from '../icons/CollapseIcon.vue'
 
 const workspace = useWorkspaceStore()
-const searchFile = ref('')
 const fileTree = ref([])
 
 const getTreeRoot = async () => {
@@ -21,7 +20,16 @@ const getTreeRoot = async () => {
 }
 
 const getTreeMore = async node => {
-    console.log(node)
+    return new Promise(async resolve => {
+        const data = await window.api.getWorkspaceFiles(node.key)
+        node.children = data.map(item => ({
+            label: item.name,
+            key: item.path,
+            isLeaf: item.isfile
+        }))
+
+        resolve()
+    })
 }
 
 const newFile = () => {}
@@ -62,12 +70,11 @@ watch(
                     <CollapseIcon class="icon" />
                 </template>
             </n-button>
-            <n-input class="icon" v-model="searchFile" placeholder="" />
         </div>
 
-        <div style="flex: 1">
-            <n-tree block-line expand-on-click show-line :pattern="searchFile" :data="fileTree" :load="getTreeMore"></n-tree>
-        </div>
+        <n-scrollbar x-scrollable trigger="none" style="flex: 1">
+            <n-tree block-line expand-on-click show-line :data="fileTree" :on-load="getTreeMore"></n-tree>
+        </n-scrollbar>
     </div>
 </template>
 
@@ -84,5 +91,9 @@ watch(
     min-width: 20px;
     max-height: 20px;
     color: lightblue;
+}
+
+:deep(.n-tree-node-content__text) {
+    white-space: nowrap;
 }
 </style>
