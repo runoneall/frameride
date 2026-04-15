@@ -97,6 +97,7 @@ const newfile = () => {
 
     askinput(`在 ${folder} 中新建文件`, async name => {
         await window.api.createFile(basedir + '/' + name)
+        refresh()
     })
 }
 
@@ -106,19 +107,13 @@ const newfolder = () => {
 
     askinput(`在 ${folder} 中新建目录`, async name => {
         await window.api.createDir(basedir + '/' + name)
+        refresh()
     })
 }
 
-const refresh = async () => {}
+const refresh = () => loadtree()
 
-const collapse = () => {
-    expandkey.value = []
-    treedata.value.forEach(item => {
-        if (!item.isLeaf && item.children) {
-            item.children = undefined
-        }
-    })
-}
+const collapse = () => (expandkey.value = [])
 
 const remove = async () => {}
 
