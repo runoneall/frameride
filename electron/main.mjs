@@ -104,7 +104,7 @@ ipcMain.handle('create-file', (_, target = '') => {
 
 ipcMain.handle('create-dir', (_, target = '') => {
     if (target === '') return
-    return fs.mkdirSync(path.join(workspace_root, target))
+    return fs.mkdirSync(path.join(workspace_root, target), { recursive: true })
 })
 
 ipcMain.handle('rename-dir-file', (_, target = '', name = '') => {

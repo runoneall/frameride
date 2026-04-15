@@ -97,7 +97,7 @@ const newfile = () => {
     const folder = basedir === '' ? '根目录' : basedir
 
     askinput(`在 ${folder} 中新建文件`, async name => {
-        console.log(basedir, name)
+        await window.api.createFile(basedir + '/' + name)
     })
 }
 
@@ -106,7 +106,7 @@ const newfolder = () => {
     const folder = basedir === '' ? '根目录' : basedir
 
     askinput(`在 ${folder} 中新建目录`, async name => {
-        console.log(basedir, name)
+        await window.api.createDir(basedir + '/' + name)
     })
 }
 
@@ -209,8 +209,8 @@ watch(
 
         <n-dropdown placement="bottom-start" trigger="manual" :x="menux" :y="menuy" :options="menuopt" :show="menushow" :on-clickoutside="menuclose" @update:show="v => (menushow = v)" @select="menuselect" />
 
-        <n-scrollbar x-scrollable trigger="none" style="flex: 1">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey" @contextmenu="mousemenu"></n-tree>
+        <n-scrollbar x-scrollable trigger="none" style="flex: 1" @contextmenu="mousemenu">
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
         </n-scrollbar>
     </div>
 </template>
