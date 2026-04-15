@@ -34,7 +34,7 @@ const collapse = () => {}
 
 watch(
     () => workspace.root,
-    (_, _) => getTreeRoot(),
+    () => getTreeRoot(),
     { immediate: true }
 )
 </script>
