@@ -5,8 +5,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build && electron-builder",
-        "preview": "vite preview"
+        "build-linux": "vite build && electron-builder --linux",
+        "build-mac": "vite build && electron-builder --mac",
+        "build-win": "vite build && electron-builder --win"
     },
     "dependencies": {
         "pinia": "^3.0.4",
