@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, h, nextTick } from 'vue'
+import { ref, watch, h } from 'vue'
 import { useDialog, NInput } from 'naive-ui'
 import { useWorkspaceStore } from '../stores/workspace'
 
@@ -163,15 +163,17 @@ const menuopt = [
     }
 ]
 
-const mousemenu = e => {
-    e.preventDefault()
-    menushow.value = false
+const nodeprop = ({ option }) => {
+    return {
+        onContextmenu: e => {
+            e.preventDefault()
+            selectkey.value = [option.key]
 
-    nextTick().then(() => {
-        menushow.value = true
-        menux.value = e.clientX
-        menuy.value = e.clientY
-    })
+            menux.value = e.clientX
+            menuy.value = e.clientY
+            menushow.value = true
+        }
+    }
 }
 
 watch(
@@ -208,8 +210,8 @@ watch(
 
         <n-dropdown placement="bottom-start" trigger="manual" :x="menux" :y="menuy" :options="menuopt" :show="menushow" :on-clickoutside="menuclose" @update:show="v => (menushow = v)" @select="menuselect" />
 
-        <n-scrollbar x-scrollable trigger="none" style="flex: 1" @contextmenu="mousemenu">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" v-model:expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
+        <n-scrollbar x-scrollable trigger="none" style="flex: 1">
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" v-model:expanded-keys="expandkey" v-model:selected-keys="selectkey" :node-props="nodeprop"></n-tree>
         </n-scrollbar>
     </div>
 </template>
