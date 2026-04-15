@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, h } from 'vue'
+import { ref, watch, h, nextTick } from 'vue'
 import { useDialog, NInput } from 'naive-ui'
 import { useWorkspaceStore } from '../stores/workspace'
 
@@ -119,6 +119,60 @@ const collapse = () => {
     })
 }
 
+const remove = async () => {}
+
+const rename = async () => {}
+
+const menux = ref(0)
+const menuy = ref(0)
+const menushow = ref(false)
+const menuclose = () => (menushow.value = false)
+const menuselect = async (_, item) => await item.call()
+
+const menuopt = [
+    {
+        label: '新建',
+        key: 'new',
+        children: [
+            {
+                label: '文件',
+                call: newfile
+            },
+            {
+                label: '文件夹',
+                call: newfolder
+            }
+        ]
+    },
+    {
+        label: '刷新',
+        call: refresh
+    },
+    {
+        label: '折叠',
+        call: collapse
+    },
+    {
+        label: '删除',
+        call: remove
+    },
+    {
+        label: '重命名',
+        call: rename
+    }
+]
+
+const mousemenu = e => {
+    e.preventDefault()
+    menushow.value = false
+
+    nextTick().then(() => {
+        menushow.value = true
+        menux.value = e.clientX
+        menuy.value = e.clientY
+    })
+}
+
 watch(
     () => workspace.root,
     () => loadtree(),
@@ -151,8 +205,10 @@ watch(
             </n-button>
         </div>
 
+        <n-dropdown placement="bottom-start" trigger="manual" :x="menux" :y="menuy" :options="menuopt" :show="menushow" :on-clickoutside="menuclose" @update:show="v => (menushow = v)" @select="menuselect" />
+
         <n-scrollbar x-scrollable trigger="none" style="flex: 1">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey" @contextmenu="mousemenu"></n-tree>
         </n-scrollbar>
     </div>
 </template>
