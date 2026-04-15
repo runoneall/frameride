@@ -12,30 +12,24 @@
 
     linux: {
         target: ['AppImage'],
-        artifactName: '${productName}-Linux.${ext}',
+        artifactName: '${productName} Linux.${ext}',
         icon: 'electron/icon.png'
     },
 
     mac: {
-        target: ['dmg'],
-        artifactName: '${productName}-Mac-Installer.${ext}',
+        target: ['zip'],
+        artifactName: '${productName} MacOS.${ext}',
         icon: 'electron/icon.png'
     },
 
-    nsis: {
-        oneClick: false,
-        perMachine: false,
-        allowToChangeInstallationDirectory: true,
-        deleteAppDataOnUninstall: false
-    },
     win: {
         target: [
             {
-                target: 'nsis',
+                target: 'portable',
                 arch: ['x64']
             }
         ],
-        artifactName: '${productName}-Windows-Setup.${ext}',
+        artifactName: '${productName} Windows.${ext}',
         signAndEditExecutable: false,
         icon: 'electron/icon.png'
     }
