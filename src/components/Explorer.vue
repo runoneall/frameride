@@ -27,11 +27,11 @@ const loadtree = async node => {
     }
 }
 
-const newfile = () => {}
+const newfile = async () => {}
 
-const newfolder = () => {}
+const newfolder = async () => {}
 
-const refresh = () => {}
+const refresh = async () => {}
 
 const collapse = () => {
     expandkey.value = []
