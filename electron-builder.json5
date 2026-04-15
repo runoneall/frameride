@@ -12,14 +12,12 @@
 
     linux: {
         target: ['AppImage'],
-        artifactName: '${productName} Linux.${ext}',
-        icon: 'icons/icon.png'
+        artifactName: '${productName} Linux.${ext}'
     },
 
     mac: {
         target: ['zip'],
-        artifactName: '${productName} MacOS.${ext}',
-        icon: 'icons/icon.icns'
+        artifactName: '${productName} MacOS.${ext}'
     },
 
     win: {
@@ -30,7 +28,6 @@
             }
         ],
         artifactName: '${productName} Windows.${ext}',
-        signAndEditExecutable: false,
-        icon: 'icons/icon.ico'
+        signAndEditExecutable: false
     }
 }
