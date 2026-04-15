@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
@@ -34,14 +34,14 @@ const createWindow = () => {
     }
 
     win = new BrowserWindow({
+        width: 1024,
+        height: 768,
+        autoHideMenuBar: true,
+        icon: path.join(__dirname, '..', 'public', 'icons', 'icon.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.mjs')
         }
     })
-
-    // Menu.setApplicationMenu(null)
-
-    win.setSize(1024, 768)
 
     if (VITE_DEV_SERVER_URL) {
         win.loadURL(VITE_DEV_SERVER_URL)

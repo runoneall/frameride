@@ -8,9 +8,15 @@
         output: 'release/${version}'
     },
     files: ['dist', 'dist-electron'],
+    linux: {
+        target: ['AppImage'],
+        artifactName: '${productName}-Linux-${version}.${ext}',
+        icon: 'public/icons/icon.png'
+    },
     mac: {
         target: ['dmg'],
-        artifactName: '${productName}-Mac-${version}-Installer.${ext}'
+        artifactName: '${productName}-Mac-${version}-Installer.${ext}',
+        icon: 'public/icons/icon.icns'
     },
     win: {
         target: [
@@ -20,16 +26,13 @@
             }
         ],
         artifactName: '${productName}-Windows-${version}-Setup.${ext}',
-        signAndEditExecutable: false
+        signAndEditExecutable: false,
+        icon: 'public/icons/icon.ico'
     },
     nsis: {
         oneClick: false,
         perMachine: false,
         allowToChangeInstallationDirectory: true,
         deleteAppDataOnUninstall: false
-    },
-    linux: {
-        target: ['AppImage'],
-        artifactName: '${productName}-Linux-${version}.${ext}'
     }
 }
