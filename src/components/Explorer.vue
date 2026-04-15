@@ -24,7 +24,6 @@ const loadtree = async node => {
 
     if (node) {
         node.children = mapped
-        expandkey.value.push(node.key)
     } else {
         treedata.value = mapped
     }
@@ -210,7 +209,7 @@ watch(
         <n-dropdown placement="bottom-start" trigger="manual" :x="menux" :y="menuy" :options="menuopt" :show="menushow" :on-clickoutside="menuclose" @update:show="v => (menushow = v)" @select="menuselect" />
 
         <n-scrollbar x-scrollable trigger="none" style="flex: 1" @contextmenu="mousemenu">
-            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" :expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
+            <n-tree block-line expand-on-click show-line :data="treedata" :on-load="loadtree" v-model:expanded-keys="expandkey" v-model:selected-keys="selectkey"></n-tree>
         </n-scrollbar>
     </div>
 </template>
