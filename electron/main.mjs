@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog } from 'electron'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import os from 'node:os'
@@ -110,4 +110,12 @@ ipcMain.handle('create-dir', (_, target = '') => {
 ipcMain.handle('rename-dir-file', (_, target = '', name = '') => {
     if (target === '' || name === '') return
     return fs.renameSync(path.join(workspace_root, target), path.join(workspace_root, name))
+})
+
+ipcMain.handle('pick-dir', async _ => {
+    const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+    })
+
+    return result.filePaths[0]
 })

@@ -1,17 +1,27 @@
 <script setup>
+import { useWorkspaceStore } from '../stores/workspace'
+
+const workspace = useWorkspaceStore()
+const changespace = async () => {
+    const dir = await window.api.pickDir()
+    if (!dir) return
+
+    await window.api.setWorkspaceRoot(dir)
+    workspace.setroot(dir)
+}
+
+const onclick = async (_, item) => await item.call()
 const menuopt = [
     {
         label: '工作区',
         children: [
             {
                 label: '打开',
-                call: () => console.log('打开')
+                call: changespace
             }
         ]
     }
 ]
-
-const onclick = (_, item) => item.call()
 </script>
 
 <template>
