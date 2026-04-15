@@ -36,7 +36,7 @@ const refresh = async () => {}
 const collapse = () => {
     expandkey.value = []
     treedata.value.forEach(item => {
-        if (!item.isLeaf) {
+        if (!item.isLeaf && item.children) {
             item.children = undefined
         }
     })
