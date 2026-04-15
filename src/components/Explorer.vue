@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, h } from 'vue'
+import { useDialog, NInput } from 'naive-ui'
 import { useWorkspaceStore } from '../stores/workspace'
 
 import NewFileIcon from '../icons/NewFileIcon.vue'
@@ -8,6 +9,7 @@ import RefreshIcon from '../icons/RefreshIcon.vue'
 import CollapseIcon from '../icons/CollapseIcon.vue'
 
 const workspace = useWorkspaceStore()
+const dialog = useDialog()
 const treedata = ref([])
 const expandkey = ref([])
 const selectkey = ref([])
@@ -47,9 +49,64 @@ const getselectdir = () => {
     return curpath
 }
 
-const newfile = async () => {}
+const askinput = (title, callback) => {
+    const input = ref('')
 
-const newfolder = async () => {}
+    dialog.create({
+        title,
+        content: () =>
+            h(NInput, {
+                placeholder: ' ',
+                autofocus: true,
+
+                value: input.value,
+                'onUpdate:value': val => {
+                    input.value = val
+                },
+
+                onKeydown: e => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault()
+
+                        const val = input.value.trim()
+                        if (val) {
+                            callback(val)
+                            dialog.destroyAll()
+                        }
+                    }
+                }
+            }),
+
+        positiveText: '确定',
+        negativeText: '取消',
+
+        onPositiveClick: () => {
+            const val = input.value.trim()
+            if (!val) return false
+
+            callback(val)
+            return true
+        }
+    })
+}
+
+const newfile = () => {
+    const basedir = getselectdir()
+    const folder = basedir === '' ? '根目录' : basedir
+
+    askinput(`在 ${folder} 中新建文件`, async name => {
+        console.log(basedir, name)
+    })
+}
+
+const newfolder = () => {
+    const basedir = getselectdir()
+    const folder = basedir === '' ? '根目录' : basedir
+
+    askinput(`在 ${folder} 中新建目录`, async name => {
+        console.log(basedir, name)
+    })
+}
 
 const refresh = async () => {}
 
