@@ -69,30 +69,41 @@ ipcMain.handle('get-workspace-root', () => {
     return workspace_root
 })
 
-ipcMain.handle('set-workspace-root', target => {
+ipcMain.handle('set-workspace-root', (_, target = '') => {
+    if (target === '') return
     workspace_root = target
 })
 
-ipcMain.handle('get-workspace-files', target => {
-    return fs.readdirSync(path.join(workspace_root, target))
+ipcMain.handle('get-workspace-files', (_, target = '') => {
+    const array = fs.readdirSync(path.join(workspace_root, target))
+    return array.map(item => ({
+        name: item,
+        path: path.join(target, item),
+        isfile: fs.statSync(path.join(workspace_root, target, item)).isFile()
+    }))
 })
 
-ipcMain.handle('del-workspace-files', target => {
+ipcMain.handle('del-workspace-files', (_, target = '') => {
+    if (target === '') return
     return fs.rmSync(path.join(workspace_root, target), { recursive: true })
 })
 
-ipcMain.handle('get-file-content', target => {
+ipcMain.handle('get-file-content', (_, target = '') => {
+    if (target === '') return
     return fs.readFileSync(path.join(workspace_root, target), 'utf-8')
 })
 
-ipcMain.handle('set-file-content', (target, content) => {
+ipcMain.handle('set-file-content', (_, target = '', content = '') => {
+    if (target === '' || content === '') return
     return fs.writeFileSync(path.join(workspace_root, target), content)
 })
 
-ipcMain.handle('create-file', target => {
+ipcMain.handle('create-file', (_, target = '') => {
+    if (target === '') return
     return fs.writeFileSync(path.join(workspace_root, target), '')
 })
 
-ipcMain.handle('create-dir', target => {
+ipcMain.handle('create-dir', (_, target = '') => {
+    if (target === '') return
     return fs.mkdirSync(path.join(workspace_root, target))
 })
