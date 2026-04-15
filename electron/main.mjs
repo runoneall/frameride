@@ -106,3 +106,8 @@ ipcMain.handle('create-dir', (_, target = '') => {
     if (target === '') return
     return fs.mkdirSync(path.join(workspace_root, target))
 })
+
+ipcMain.handle('rename-dir-file', (_, target = '', name = '') => {
+    if (target === '' || name === '') return
+    return fs.renameSync(path.join(workspace_root, target), path.join(workspace_root, name))
+})
