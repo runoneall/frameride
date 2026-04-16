@@ -18,9 +18,5 @@ export default defineConfig({
 
             renderer: process.env.NODE_ENV === 'test' ? undefined : {}
         })
-    ],
-
-    optimizeDeps: {
-        exclude: ['monaco-editor']
-    }
+    ]
 })
