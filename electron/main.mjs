@@ -109,7 +109,7 @@ ipcMain.handle('create-dir', (_, target = '') => {
 
 ipcMain.handle('rename-dir-file', (_, target = '', name = '') => {
     if (target === '' || name === '') return
-    return fs.renameSync(path.join(workspace_root, target), path.join(workspace_root, name))
+    return fs.renameSync(path.join(workspace_root, target), path.join(workspace_root, path.dirname(target), name))
 })
 
 ipcMain.handle('pick-dir', async _ => {

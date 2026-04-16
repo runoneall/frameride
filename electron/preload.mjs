@@ -13,7 +13,7 @@ contextBridge.exposeInMainWorld('api', {
     createFile: target => ipcRenderer.invoke('create-file', target),
     createDir: target => ipcRenderer.invoke('create-dir', target),
 
-    renameDirFile: (target, name) => ipcRenderer.invoke('rename-dir-file', target, name), //
+    renameDirFile: (target, name) => ipcRenderer.invoke('rename-dir-file', target, name),
 
     pickDir: () => ipcRenderer.invoke('pick-dir')
 })

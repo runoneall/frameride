@@ -138,7 +138,15 @@ const remove = () => {
     })
 }
 
-const rename = async () => {}
+const rename = () => {
+    if (selectkey.value.length === 0) return
+    const target = selectkey.value[0]
+
+    askinput(`重命名 ${target}`, async name => {
+        await window.api.renameDirFile(target, name)
+        refresh()
+    })
+}
 
 const menux = ref(0)
 const menuy = ref(0)
