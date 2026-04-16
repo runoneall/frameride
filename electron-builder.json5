@@ -11,7 +11,7 @@
     files: ['dist', 'dist-electron'],
 
     linux: {
-        target: ['AppImage'],
+        target: ['zip'],
         artifactName: '${productName} Linux.${ext}'
     },
 
