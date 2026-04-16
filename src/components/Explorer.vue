@@ -128,7 +128,7 @@ const refresh = () => loadtree()
 
 const collapse = () => (expandkey.value = [])
 
-const remove = async () => {
+const remove = () => {
     if (selectkey.value.length === 0) return
     const target = selectkey.value[0]
 
