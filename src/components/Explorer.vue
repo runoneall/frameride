@@ -29,11 +29,9 @@ const loadtree = async node => {
     }
 }
 
-const splitpath = path => path.split(/[\\/]/).filter(item => item)
-
 const getselectdir = () => {
     if (selectkey.value.length === 0) return ''
-    const keys = splitpath(selectkey.value[0])
+    const keys = selectkey.value[0].split(/[\\/]/).filter(item => item)
 
     let curpath = ''
     let nodes = treedata.value
