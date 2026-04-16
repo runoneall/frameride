@@ -10,6 +10,7 @@
         "build-win": "vite build && electron-builder --win"
     },
     "dependencies": {
+        "monaco-editor-vue3": "^1.0.5",
         "pinia": "^3.0.4",
         "vue": "^3.4.21"
     },
