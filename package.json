@@ -10,6 +10,7 @@
         "build-win": "vite build && electron-builder --win"
     },
     "dependencies": {
+        "@babel/runtime": "^7.29.2",
         "@codemirror/lang-javascript": "^6.2.5",
         "@uiw/codemirror-theme-vscode": "^4.25.9",
         "codemirror": "^6.0.2",
