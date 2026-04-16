@@ -10,8 +10,13 @@
         "build-win": "vite build && electron-builder --win"
     },
     "dependencies": {
+        "@codemirror/commands": "^6.10.3",
+        "@codemirror/lang-javascript": "^6.2.5",
+        "@codemirror/state": "^6.6.0",
+        "@codemirror/view": "^6.41.0",
         "pinia": "^3.0.4",
-        "vue": "^3.4.21"
+        "vue": "^3.4.21",
+        "vue-codemirror6": "^1.5.1"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.0.4",
