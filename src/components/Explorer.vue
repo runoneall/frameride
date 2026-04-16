@@ -91,6 +91,19 @@ const askinput = (title, callback) => {
     })
 }
 
+const askconfirm = (title, callback) => {
+    dialog.create({
+        title,
+        positiveText: '确定',
+        negativeText: '取消',
+
+        onPositiveClick: () => {
+            callback()
+            return true
+        }
+    })
+}
+
 const newfile = () => {
     const basedir = getselectdir()
     const folder = basedir === '' ? '根目录' : basedir
@@ -115,7 +128,15 @@ const refresh = () => loadtree()
 
 const collapse = () => (expandkey.value = [])
 
-const remove = async () => {}
+const remove = async () => {
+    if (selectkey.value.length === 0) return
+    const target = selectkey.value[0]
+
+    askconfirm(`确定删除 ${target} 吗？`, async () => {
+        await window.api.delWorkspaceFiles(target)
+        refresh()
+    })
+}
 
 const rename = async () => {}
 

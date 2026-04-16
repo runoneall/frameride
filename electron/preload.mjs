@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('api', {
     setWorkspaceRoot: target => ipcRenderer.invoke('set-workspace-root', target),
 
     getWorkspaceFiles: target => ipcRenderer.invoke('get-workspace-files', target),
-    delWorkspaceFiles: target => ipcRenderer.invoke('del-workspace-files', target), //
+    delWorkspaceFiles: target => ipcRenderer.invoke('del-workspace-files', target),
 
     getFileContent: target => ipcRenderer.invoke('get-file-content', target), //
     setFileContent: (target, content) => ipcRenderer.invoke('set-file-content', target, content), //
