@@ -11,7 +11,7 @@ app.use(pinia)
 
 import { useWorkspaceStore } from './stores/workspace'
 const workspace = useWorkspaceStore()
-await workspace.init()
+workspace.init()
 
 import './global.css'
 app.mount('#app')

@@ -203,7 +203,9 @@ const nodeprop = ({ option }) => {
 
 watch(
     () => workspace.root,
-    () => loadtree(),
+    (value, _) => {
+        if (value) loadtree()
+    },
     { immediate: true }
 )
 </script>
