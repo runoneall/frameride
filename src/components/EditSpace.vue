@@ -3,12 +3,12 @@ import { ref } from 'vue'
 
 import CodeMirror from 'vue-codemirror6'
 import { basicSetup } from 'codemirror'
-import { oneDark } from '@codemirror/theme-one-dark'
+import { vscodeDark } from '@uiw/codemirror-theme-vscode'
 
 import { javascript } from '@codemirror/lang-javascript'
 
 const code = ref('// 在这里编写代码...\nconsole.log("Hello, World!")')
-const extensions = [basicSetup, oneDark, javascript()]
+const extensions = [basicSetup, vscodeDark, javascript()]
 </script>
 
 <template>
